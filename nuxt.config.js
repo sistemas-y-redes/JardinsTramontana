@@ -14,7 +14,7 @@ export default {
    //target: "server",
 
   head: {
-    title: 'Proyecto 2023',
+    title: 'App',
     htmlAttrs: {
       lang: 'es'
     },
@@ -103,11 +103,11 @@ export default {
   },
   pwa: {
     meta: {
-      title: 'Proyecto 2023',
+      title: 'App',
       author: 'Sistemas y Redes',
     },
     manifest: {
-      name: 'Proyecto 2023',
+      name: 'App',
       short_name: 'SYR',
       lang: 'es',
     },
