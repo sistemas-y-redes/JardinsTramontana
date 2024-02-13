@@ -10,7 +10,7 @@
         </div>
     </nav>
 </template>
-  
+
 <script>
 export default {
     computed: {
@@ -48,12 +48,12 @@ export default {
                     icon: "gear",
                     color: "standard",
                 },
-                {
-                    name: "Tareas",
-                    link: "/tareas",
-                    icon: "card-checklist",
-                    color: "standard",
-                },
+                // {
+                //     name: "Tareas",
+                //     link: "/tareas",
+                //     icon: "card-checklist",
+                //     color: "standard",
+                // },
                 {
                     name: "Vacaciones",
                     link: "/vacaciones",
@@ -69,7 +69,7 @@ export default {
 
 };
 </script>
-  
+
 <style scoped>
 .navigation-bar {
     background: rgba(255, 255, 255, 0.5);
@@ -128,4 +128,3 @@ export default {
 }
 </style>
 
-  

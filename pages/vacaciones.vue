@@ -7,6 +7,7 @@
       <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
       <p>Cargando...</p>
     </div>
+
     <div class="vacationForm vacation-section" v-if="this.loading === false">
       <label>Seleccionar período de vacaciones:</label>
       <div>
@@ -25,7 +26,7 @@
         <select class="form-select" v-model="vacationReason">
           <option disabled value="">Por favor seleccione uno</option>
           <option>Vacaciones</option>
-          <option>Día libre</option>
+          <!-- <option>Día libre</option> -->
           <!-- Agrega más motivos aquí -->
         </select>
       </div>
@@ -39,6 +40,10 @@
         @click="setVacaciones">
         Solicitar
       </b-button>
+      <div class="vacation-pending-note text-center mt-2">
+        <p class="mb-0 text-secondary small">Vacaciones por disfrutar: <strong>{{
+          this.$store.state.UserInfo.EmpleadoData.VacacionesPendientes }}</strong></p>
+      </div>
     </div>
     <!-- El resto de tu contenido existente -->
     <div v-if="vacations && vacations.length > 0 && this.loading === false" class="vacation-section">
@@ -93,7 +98,6 @@
               <select class="form-select" v-model="vacacionActual.Motivo">
                 <option disabled value="">Por favor seleccione uno</option>
                 <option>Vacaciones</option>
-                <option>Día libre</option>
                 <!-- Agrega más motivos aquí -->
               </select>
             </b-row>
@@ -128,7 +132,7 @@ export default {
       loading: true,
       startDate: null,
       endDate: null,
-      vacationReason: '',
+      vacationReason: 'Vacaciones',
       disabledDates: {
         to: new Date(new Date().setDate(new Date().getDate() - 1)), // Deshabilita fechas pasadas
       },
