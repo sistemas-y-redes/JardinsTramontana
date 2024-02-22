@@ -26,12 +26,10 @@ router.post('/save-subscription', (req, res) => {
 // Método para enviar notificaciones push
 router.post('/send-notification', (req, res) => {
     const notificationPayload = {
-        notification: {
             title: 'Nuevo periodo de vacaciones asignado',
             body: 'Tienes un nuevo periodo de vacaciones asignado. ¡Revisa los detalles!',
-            // icon: 'icons/icon-96x96.png',
+            icon: '/icon.png',
             vibrate: [100, 50, 100],
-        },
     };
 
     const sql = 'SELECT * FROM subscriptions';

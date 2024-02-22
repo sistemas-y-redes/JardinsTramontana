@@ -1,17 +1,11 @@
-// THIS FILE SHOULD NOT BE VERSION CONTROLLED
+self.addEventListener('push', function(event) {
+  const data = event.data.json();
+  const title = data.notification.title || 'Nuevo periodo de vacaciones asignado';
+  const options = {
+    body: data.body || 'Tienes un nuevo periodo de vacaciones asignado. ¡Revisa los detalles!',
+    icon: data.icon || '/icon.png',
+    badge: '/badge.png'
+  };
 
-// https://github.com/NekR/self-destroying-sw
-
-self.addEventListener('install', function (e) {
-  self.skipWaiting()
-})
-
-self.addEventListener('activate', function (e) {
-  self.registration.unregister()
-    .then(function () {
-      return self.clients.matchAll()
-    })
-    .then(function (clients) {
-      clients.forEach(client => client.navigate(client.url))
-    })
-})
+  event.waitUntil(self.registration.showNotification(title, options));
+});

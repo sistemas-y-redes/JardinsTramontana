@@ -1,9 +1,6 @@
 import pkg from './package.json'
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
-  env: {
-    VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY
-  },
   /*
   ** Nuxt rendering mode
   ** See https://nuxtjs.org/api/configuration-mode
@@ -96,6 +93,7 @@ export default {
   },
   env: {
     base_url: process.env.MODE == 'desarrollo' ? 'http://192.168.200.125:3000/' : 'https://app.jardinstramuntana.com/',
+    VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY
   },
   axios: {
     baseURL: process.env.MODE == 'desarrollo' ? 'http://192.168.200.125:3000/' : 'https://app.jardinstramuntana.com/',
@@ -106,6 +104,7 @@ export default {
     port: 3000
   },
   pwa: {
+    workbox: false,
     meta: {
       title: 'App',
       author: 'Sistemas y Redes',
