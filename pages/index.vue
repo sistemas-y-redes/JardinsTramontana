@@ -2,8 +2,8 @@
   <div>
     <div class="mensaje-bienvenida">
       <p v-if="userInfo">
-      Bienvenido a nuestro gestor de tareas {{ userInfo.EmpleadoNombre }}
-    </p>
+        Bienvenido a nuestro gestor de tareas {{ userInfo.EmpleadoNombre }}
+      </p>
     </div>
 
     <div class="no-data">
@@ -243,5 +243,4 @@ a {
   background-color: #f0f0f0;
   /* Otros estilos que desees aplicar */
 }
-
 </style>
