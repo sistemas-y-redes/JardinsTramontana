@@ -1,5 +1,3 @@
-// plugins/service-worker.js
-
 if (process.client) {
   window.addEventListener('load', () => {
     if ('serviceWorker' in navigator) {
@@ -21,13 +19,18 @@ if ('serviceWorker' in navigator && 'PushManager' in window) {
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array('BIcIvSyTcUeuI__tZPs1MuQWG31692dv5QheWupn2SY9X6GB6kBR89oJEe1RK1lmu5FstGLCcdpnF0IhdS_O4p4') // Reemplaza con tu VAPID public key
         }).then(subscription => {
-          // Enviar la suscripción al servidor
+          // Recuperar el username del almacenamiento local
+          const username = localStorage.getItem('User');
+          // Enviar la suscripción y username al servidor
           fetch('/api/save-subscription', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(subscription),
+            body: JSON.stringify({
+             subscription,
+              username: username
+            }),
           });
         }).catch(error => console.error('Error al suscribirse a las notificaciones push', error));
       }

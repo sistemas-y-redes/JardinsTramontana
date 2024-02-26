@@ -10,10 +10,16 @@ router.use(bodyParser.json());
 
 // Método para guardar una suscripción
 router.post('/save-subscription', (req, res) => {
-    const { endpoint, keys } = req.body;
-    const sql = 'INSERT INTO subscriptions (endpoint, keys_auth, keys_p256dh) VALUES (?, ?, ?)';
+    const { subscription, username } = req.body;
+    const { endpoint, keys } = subscription;
+    console.log('endpoint', endpoint);
+    console.log('username', username);
+    if (!keys || !keys.auth || !keys.p256dh) {
+        return res.status(400).json({ success: false, message: 'Las claves de la suscripción son inválidas o están incompletas.' });
+    }
+    const sql = 'INSERT INTO subscriptions (endpoint, keys_auth, keys_p256dh, username) VALUES (?, ?, ?, ?)';
 
-    db.run(sql, [endpoint, keys.auth, keys.p256dh], function(err) {
+    db.run(sql, [endpoint, keys.auth, keys.p256dh, username], function (err) {
         if (err) {
             console.error('Error al guardar la suscripción', err);
             res.status(500).json({ success: false, message: 'Error al guardar la suscripción en la base de datos.' });
@@ -25,15 +31,20 @@ router.post('/save-subscription', (req, res) => {
 
 // Método para enviar notificaciones push
 router.post('/send-notification', (req, res) => {
+    const { username } = req.body;
+    console.log('username', username);
+    const sql = 'SELECT * FROM subscriptions WHERE username = ?';
     const notificationPayload = {
-            title: 'Nuevo periodo de vacaciones asignado',
-            body: 'Tienes un nuevo periodo de vacaciones asignado. ¡Revisa los detalles!',
+        notification: {
+            title: req.body.title || 'Nuevo periodo de vacaciones asignado',
+            body: req.body.body || 'Tienes un nuevo periodo de vacaciones asignado. ¡Revisa los detalles!',
             icon: '/icon.png',
             vibrate: [100, 50, 100],
+        }
     };
 
-    const sql = 'SELECT * FROM subscriptions';
-    db.all(sql, [], (err, subscriptions) => {
+    db.all(sql, [`"${username}"`], (err, subscriptions) => {
+        console.log('Suscripciones recuperadas', subscriptions);
         if (err) {
             console.error('Error al recuperar suscripciones', err);
             res.status(500).json({ success: false, message: 'Error al recuperar suscripciones.' });
@@ -51,6 +62,7 @@ router.post('/send-notification', (req, res) => {
             };
 
             promiseChain = promiseChain.then(() => webPush.sendNotification(pushSubscription, JSON.stringify(notificationPayload))
+                .then(() => console.log('Notificación enviada con éxito.'))
                 .catch(err => console.error('Error al enviar notificación', err)));
         });
 
