@@ -9,7 +9,7 @@ const vapidKeys = {
 };
 
 webPush.setVapidDetails(
-  'mailto:example@yourdomain.org', // Tu correo electrónico
+  'mailto:departamentoweb@syr.es', // Tu correo electrónico
   vapidKeys.publicKey,
   vapidKeys.privateKey
 );

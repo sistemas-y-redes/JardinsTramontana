@@ -36,9 +36,9 @@ router.post('/send-notification', (req, res) => {
     const sql = 'SELECT * FROM subscriptions WHERE username = ?';
     const notificationPayload = {
         notification: {
-            title: req.body.title || 'Nuevo periodo de vacaciones asignado',
-            body: req.body.body || 'Tienes un nuevo periodo de vacaciones asignado. ¡Revisa los detalles!',
-            icon: '/icon.png',
+            title: req.body.notification.title || 'Nuevo periodo de vacaciones asignado',
+            body: req.body.notification.body || 'Tienes un nuevo periodo de vacaciones asignado. ¡Revisa los detalles!',
+            icon: req.body.notification.icon || '/icon.png',
             vibrate: [100, 50, 100],
         }
     };
