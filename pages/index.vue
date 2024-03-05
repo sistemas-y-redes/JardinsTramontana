@@ -96,11 +96,17 @@
           fill="#ccc" />
       </svg>
     </div>
+    <NotificationPermissionModal :show="showModal" @close="showModal = false" />
   </div>
 </template>
 
 <script>
+import NotificationPermissionModal from '~/components/NotificationPermissionModal.vue';
+
 export default {
+  components: {
+    NotificationPermissionModal
+  },
   middleware: 'authentication',
   data() {
     return {
@@ -108,10 +114,26 @@ export default {
       visitas: [],
       limite: 5,
       error: false,
+      showModal: false,
     };
   },
   methods: {
-    
+    checkSubscription() {
+      console.log("Checking subscription...");
+      if ('serviceWorker' in navigator && 'PushManager' in window) {
+        navigator.serviceWorker.ready.then(registration => {
+          console.log("Service worker ready, checking for existing subscription...");
+          registration.pushManager.getSubscription().then(subscription => {
+            if (!subscription) {
+              console.log("No existing subscription found, showing modal...");
+              this.showModal = true;
+            } else {
+              console.log("Existing subscription found.");
+            }
+          }).catch(error => console.error("Error checking subscription:", error));
+        }).catch(error => console.error("Error with service worker registration:", error));
+      }
+    },
   },
   computed: {
     userInfo() {
@@ -119,7 +141,26 @@ export default {
     }
   },
   mounted() {
-  },
+    console.log("Mounted index.vue, checking subscription...");
+    this.checkSubscription(); // Esto debería funcionar ahora sin errores
+
+    let userInfo = null;
+    try {
+      userInfo = JSON.parse(localStorage.getItem('UserInfo'));
+    } catch (error) {
+      console.error("Error parsing UserInfo from localStorage:", error);
+    }
+
+    const username = userInfo?.username;
+
+    if (username) {
+      console.log(`Username from localStorage: ${username}`);
+      // Si es necesario hacer algo más con el username, puedes hacerlo aquí
+    } else {
+      console.error('Username is not available in Vuex or localStorage');
+      // Considera manejar este caso adecuadamente
+    }
+  }
 };
 </script>
 
@@ -237,6 +278,7 @@ a {
   padding: 0.4rem;
   border-radius: 0.2rem;
 }
+
 .mensaje-bienvenida {
   text-align: center;
   padding: 10px;

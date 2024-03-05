@@ -14,7 +14,7 @@ router.post('/save-subscription', (req, res) => {
     const { subscription, username } = req.body;
     const { endpoint, keys } = subscription;
     console.log('endpoint', endpoint);
-    console.log('username', username);
+    console.log('username pasado a save-subscription', username);
     if (!keys || !keys.auth || !keys.p256dh) {
         return res.status(400).json({ success: false, message: 'Las claves de la suscripción son inválidas o están incompletas.' });
     }
@@ -43,8 +43,7 @@ router.post('/send-notification', (req, res) => {
         }
     };
 
-    db.all(sql, [`"${username}"`], (err, subscriptions) => {
-        console.log('Suscripciones recuperadas', subscriptions);
+    db.all(sql, [`${username}`], (err, subscriptions) => {
         if (err) {
             console.error('Error al recuperar suscripciones', err);
             res.status(500).json({ success: false, message: 'Error al recuperar suscripciones.' });
