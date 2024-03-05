@@ -1,4 +1,5 @@
 // api/controllers/notificationsController.js
+import { replaceDollar20 } from '../helpers/stringHelpers';
 
 const db = require('../db'); // Asegúrate de que este archivo esté configurado correctamente con SQLite
 const { Router } = require('express');
@@ -31,13 +32,12 @@ router.post('/save-subscription', (req, res) => {
 
 // Método para enviar notificaciones push
 router.post('/send-notification', (req, res) => {
-    const { username } = req.body;
-    console.log('username', username);
+    const { username } = req.body;  
     const sql = 'SELECT * FROM subscriptions WHERE username = ?';
     const notificationPayload = {
         notification: {
-            title: req.body.notification.title || 'Nuevo periodo de vacaciones asignado',
-            body: req.body.notification.body || 'Tienes un nuevo periodo de vacaciones asignado. ¡Revisa los detalles!',
+            title: replaceDollar20(req.body.notification.title) || 'Nuevo periodo de vacaciones asignado',
+            body: replaceDollar20(req.body.notification.body) || 'Tienes un nuevo periodo de vacaciones asignado. ¡Revisa los detalles!',
             icon: req.body.notification.icon || '/icon.png',
             vibrate: [100, 50, 100],
         }
