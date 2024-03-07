@@ -1,17 +1,16 @@
 import pkg from './package.json'
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
-
-   /*
-   ** Nuxt rendering mode
-   ** See https://nuxtjs.org/api/configuration-mode
+  /*
+  ** Nuxt rendering mode
+  ** See https://nuxtjs.org/api/configuration-mode
+  */
+  ssr: false,
+  /*
+   ** Nuxt target
+   ** See https://nuxtjs.org/api/configuration-target
    */
-   ssr: false,
-   /*
-    ** Nuxt target
-    ** See https://nuxtjs.org/api/configuration-target
-    */
-   //target: "server",
+  //target: "server",
 
   head: {
     title: 'App',
@@ -35,7 +34,7 @@ export default {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico?v=2' },
       { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css' },
-      { rel:'apple-touch-icon', type:'image/png', href: `${process.env.MODE == 'desarrollo' ? 'http://192.168.200.125:3000/' : 'https://app.jardinstramuntana.com/'}apple-touch-icon.png` }
+      { rel: 'apple-touch-icon', type: 'image/png', href: `${process.env.MODE == 'desarrollo' ? 'http://192.168.200.125:3000/' : 'https://app.jardinstramuntana.com/'}apple-touch-icon.png` }
     ]
   },
 
@@ -47,7 +46,8 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '~/plugins/initializeStore.js'
+    '~/plugins/initializeStore.js',
+    { src: '~/plugins/service-worker.js', mode: 'client' } // Asegúrate de ejecutarlo solo en el lado del cliente
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -58,7 +58,8 @@ export default {
     '@nuxtjs/fontawesome',
   ],
   serverMiddleware: [
-    '~/api/index.js'
+    '~/api/index.js',
+    { path: "/api", handler: "~/api/index.js" }
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -92,6 +93,7 @@ export default {
   },
   env: {
     base_url: process.env.MODE == 'desarrollo' ? 'http://192.168.200.125:3000/' : 'https://app.jardinstramuntana.com/',
+    VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY
   },
   axios: {
     baseURL: process.env.MODE == 'desarrollo' ? 'http://192.168.200.125:3000/' : 'https://app.jardinstramuntana.com/',
@@ -102,6 +104,7 @@ export default {
     port: 3000
   },
   pwa: {
+    workbox: false,
     meta: {
       title: 'App',
       author: 'Sistemas y Redes',
@@ -112,7 +115,7 @@ export default {
       lang: 'es',
     },
     icon: {
-      source:'/icon.png',
+      source: '/icon.png',
       fileName: 'icon.png',
     }
   },

@@ -1,17 +1,12 @@
-// THIS FILE SHOULD NOT BE VERSION CONTROLLED
+self.addEventListener('push', function(event) {
+  const data = event.data.json();
+  const title = data.notification.title || 'Título por defecto';
+  const options = {
+      body: data.notification.body || 'Mensaje por defecto',
+      icon: data.notification.icon || '/icon.png',
+      badge: '/badge.png'
+      // Asegúrate de incluir cualquier otro campo relevante aquí
+  };
 
-// https://github.com/NekR/self-destroying-sw
-
-self.addEventListener('install', function (e) {
-  self.skipWaiting()
-})
-
-self.addEventListener('activate', function (e) {
-  self.registration.unregister()
-    .then(function () {
-      return self.clients.matchAll()
-    })
-    .then(function (clients) {
-      clients.forEach(client => client.navigate(client.url))
-    })
-})
+  event.waitUntil(self.registration.showNotification(title, options));
+});
