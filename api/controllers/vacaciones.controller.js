@@ -48,14 +48,13 @@ router.post('/find', [auth.validateAccess], async (req, res) => {
         res.end()
         return 
     }
-    const vacaciones = await vacacionesModel.getvacacionesByCuentaFM(req.body.Tec)
+    let vacaciones = await vacacionesModel.getvacacionesByCuentaFM(req.body.Tec)
     if (!vacaciones) {
         res.writeHead(200)
         res.end('Vacio!')
         return
     }
-    
-    
+    vacaciones = vacaciones.filter(vacacion => vacacion.fieldData.Motivo !== "Festivos");
     res.end(JSON.stringify(vacaciones))
 })
 

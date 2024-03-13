@@ -142,8 +142,7 @@ export default {
   },
   mounted() {
     console.log("Mounted index.vue, checking subscription...");
-    this.checkSubscription(); // Esto debería funcionar ahora sin errores
-
+    this.checkSubscription();
     let userInfo = null;
     try {
       userInfo = JSON.parse(localStorage.getItem('UserInfo'));

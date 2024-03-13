@@ -47,7 +47,9 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/initializeStore.js',
-    { src: '~/plugins/service-worker.js', mode: 'client' } // Asegúrate de ejecutarlo solo en el lado del cliente
+    { src: '~/plugins/service-worker.js', mode: 'client' },
+    { src: '~/plugins/nodemailerConfig.js', mode: 'server' },
+    { src: '~/plugins/services/correoService.js', mode: 'server' },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
