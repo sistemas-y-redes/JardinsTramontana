@@ -220,10 +220,16 @@ export default {
         return;
       }
       let tec = this.$store.state.User;
+      let empleadoNombre = this.$store.state.UserInfo.EmpleadoNombre;
       try {
         let response = await this.$axios.$post(
           "/api/vacaciones/new",
-          { Tec: tec, motivo: this.vacationReason, FechaIni: this.customFormatter(this.startDate), FechaFin: this.customFormatter(this.endDate), Notas: notas },
+          { Tec: tec,
+            EmpleadoNombre: empleadoNombre,
+            motivo: this.vacationReason,
+            FechaIni: this.customFormatter(this.startDate),
+            FechaFin: this.customFormatter(this.endDate),
+            Notas: notas },
           {
             headers: {
               Authorization: `Bearer ${this.$cookies.get("TOKEN")}`,
@@ -270,6 +276,7 @@ export default {
         );
         if (response instanceof Object) {
           this.vacations = response;
+          console.log("vacaciones -> ", this.vacations);
         }
 
       } catch (e) {

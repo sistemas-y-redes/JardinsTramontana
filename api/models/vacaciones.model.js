@@ -1,11 +1,13 @@
 const vacacionesModel = {};
 
+require('dotenv').config();
 const axios = require("axios");
 const { response } = require("express");
 const https = require("https");
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 const serverName = process.env.FM_SERVER;
+const correoService = require('../../plugins/services/correoService');
 
 vacacionesModel.fmtoken = "";
 vacacionesModel.usuario = "";
@@ -174,6 +176,15 @@ vacacionesModel.newVacaciones = async (req) => {
       }
     );
 
+    // Enviar correo de aviso
+    await correoService.enviarCorreo({
+      from: process.env.MAIL_SENDER,
+      to: process.env.MAIL_TARGET,
+      subject: `SOLICITUD VACACIONES ${req.EmpleadoNombre}`,
+      text: `Se ha recibido una nueva solicitud de vacaciones por parte del empleado ${req.EmpleadoNombre} del dia ${fechaDesde} hasta el dia ${fechaFin}.`,
+      html: `<p>Se ha recibido una nueva solicitud de vacaciones por parte del empleado <strong>${req.EmpleadoNombre}</strong> del día <strong>${fechaDesde}</strong> hasta el día <strong>${fechaFin}</strong>.</p><br><p>AdminFM</p>`,
+
+    });
 
     return respuesta.data.response.recordId;
   } catch (err) {

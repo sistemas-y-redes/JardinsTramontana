@@ -21,17 +21,17 @@ const vacaciones = require("./controllers/vacaciones.controller");
 const proyectos = require("./controllers/projects.controller");
 const notificationsRouter = require('./controllers/notificationsController');
 
-const vapidPublicKey = 'BIcIvSyTcUeuI__tZPs1MuQWG31692dv5QheWupn2SY9X6GB6kBR89oJEe1RK1lmu5FstGLCcdpnF0IhdS_O4p4';
-const vapidPrivateKey = 'dkRhFVAQ7MIek72gVy5YRvdZygw_ruF1MCX2oLyyxKY';
+const vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
 
 webPush.setVapidDetails(
   'mailto:departamentoweb@syr.es', // Un correo de contacto
   vapidPublicKey,
   vapidPrivateKey
-  );
-  
-  // Arrancamos la aplicación de Expresss
-  const app = express();
+);
+
+// Arrancamos la aplicación de Expresss
+const app = express();
 
 // Inicializamos BodyParser para poder retornar los resultados en JSON
 app.use(bodyParser.json({ limit: '5mb' }));
