@@ -32,7 +32,7 @@ router.post('/save-subscription', (req, res) => {
 
 // Método para enviar notificaciones push
 router.post('/send-notification', (req, res) => {
-    const { username } = req.body;
+    let { username } = req.body;
     username = replaceDollar20(username);
     const sql = 'SELECT * FROM subscriptions WHERE username = ?';
     const notificationPayload = {
