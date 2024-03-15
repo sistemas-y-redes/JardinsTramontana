@@ -11,7 +11,8 @@ router.use(bodyParser.json());
 
 // Método para guardar una suscripción
 router.post('/save-subscription', (req, res) => {
-    const { subscription, username } = req.body;
+    let { subscription, username } = req.body;
+    username = replaceDollar20(username);
     const { endpoint, keys } = subscription;
     console.log('endpoint', endpoint);
     console.log('username pasado a save-subscription', username);
