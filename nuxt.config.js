@@ -113,7 +113,7 @@ export default {
     },
     manifest: {
       name: 'App',
-      short_name: 'SYR',
+      short_name: 'App',
       lang: 'es',
     },
     icon: {
