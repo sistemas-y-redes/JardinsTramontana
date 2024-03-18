@@ -11,8 +11,11 @@ router.use(bodyParser.json());
 
 // Método para guardar una suscripción
 router.post('/save-subscription', (req, res) => {
-    const { subscription, username } = req.body;
+    let { subscription, username } = req.body;
     const { endpoint, keys } = subscription;
+    username = username.toLowerCase();
+    console.log('guardar suscripción, nombre en lowercase', username);
+
     // console.log('endpoint', endpoint);
     // console.log('username pasado a save-subscription', username);
     if (!keys || !keys.auth || !keys.p256dh) {
@@ -33,7 +36,8 @@ router.post('/save-subscription', (req, res) => {
 // Método para enviar notificaciones push
 router.post('/send-notification', (req, res) => {
     let { username } = req.body; 
-    username = replaceDollar20(username);
+    username = replaceDollar20(username).toLowerCase();
+    console.log('username al enviar notificaciones', username)
     const sql = 'SELECT * FROM subscriptions WHERE username = ?';
     const notificationPayload = {
         notification: {
