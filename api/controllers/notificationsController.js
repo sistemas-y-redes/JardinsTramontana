@@ -13,11 +13,7 @@ router.use(bodyParser.json());
 router.post('/save-subscription', (req, res) => {
     let { subscription, username } = req.body;
     const { endpoint, keys } = subscription;
-    username = username.toLowerCase();
-    console.log('guardar suscripción, nombre en lowercase', username);
-
-    // console.log('endpoint', endpoint);
-    // console.log('username pasado a save-subscription', username);
+    username = username.toLowerCase(); // El nombre puede estar en mayúsculas o minúsculas
     if (!keys || !keys.auth || !keys.p256dh) {
         return res.status(400).json({ success: false, message: 'Las claves de la suscripción son inválidas o están incompletas.' });
     }
@@ -36,8 +32,8 @@ router.post('/save-subscription', (req, res) => {
 // Método para enviar notificaciones push
 router.post('/send-notification', (req, res) => {
     let { username } = req.body; 
+    // En la petición de FM los espacios vienen como '$20' y pueden estar en mayúsculas o minúsculas
     username = replaceDollar20(username).toLowerCase();
-    console.log('username al enviar notificaciones', username)
     const sql = 'SELECT * FROM subscriptions WHERE username = ?';
     const notificationPayload = {
         notification: {
