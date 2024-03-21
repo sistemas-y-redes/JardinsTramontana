@@ -152,7 +152,6 @@ vacacionesModel.newVacaciones = async (req) => {
     } else {
       console.log("No se encontraron registros de vacaciones");
       return false
-
     }
 
     let vacacionesFirma = {
@@ -175,7 +174,7 @@ vacacionesModel.newVacaciones = async (req) => {
         },
       }
     );
-
+    
     // Enviar correo de aviso
     await correoService.enviarCorreo({
       from: process.env.MAIL_SENDER,

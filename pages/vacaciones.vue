@@ -12,14 +12,15 @@
       <label>Seleccionar período de vacaciones:</label>
       <div>
         <label for="startDate">Fecha de inicio:</label>
-        <datepicker id="startDate" v-model="startDate" :format="customFormatter" :disabled-dates="disabledDates"
-          input-class="form-input " :calendar-class="calendarCentered">
+        <datepicker id="startDate" v-bind="datePickerConfig" monday-first v-model="startDate" :format="customFormatter"
+          :disabled-dates="disabledDates" input-class="form-input " :calendar-class="calendarCentered">
         </datepicker>
       </div>
       <div>
         <label for="endDate">Fecha de fin:</label>
-        <datepicker id="endDate" v-model="endDate" :format="customFormatter" :disabled-dates="disabledEndDates"
-          :disabled="!startDate" input-class="form-input" :calendar-class="calendarCentered"></datepicker>
+        <datepicker id="endDate" v-bind="datePickerConfig" monday-first v-model="endDate" :format="customFormatter"
+          :disabled-dates="disabledEndDates" :disabled="!startDate" input-class="form-input" :open-date="startDate"
+          :calendar-class="calendarCentered"></datepicker>
       </div>
       <div class="form-group">
         <label for="notas">Seleccionar motivo de vacaciones</label>
@@ -42,27 +43,28 @@
       </b-button>
       <div class="vacation-pending-note text-center mt-2">
         <p class="mb-0 text-secondary small">Vacaciones por disfrutar: <strong>{{
-          this.$store.state.UserInfo.EmpleadoData.VacacionesPendientes }}</strong></p>
+      this.$store.state.UserInfo.EmpleadoData.VacacionesPendientes }}</strong> días a 31 de Diciembre de {{ new
+      Date().getFullYear() }}</p>
       </div>
     </div>
     <!-- El resto de tu contenido existente -->
     <div v-if="vacations && vacations.length > 0 && this.loading === false" class="vacation-section">
-      <h2>Vacaciones Solicitadas</h2>
+      <h2>Historial vacaciones</h2>
       <ul class="vacation-list">
         <li v-for="(vacation, index) in vacations" :key="index" class="vacation-item">
 
           <div v-if="!vacation.editing" class="vacation-detail"><strong>Desde:</strong> {{
-            formatearFecha(vacation.fieldData.FechaDesde) }}
+      formatearFecha(vacation.fieldData.FechaDesde) }}
           </div>
           <div v-if="!vacation.editing" class="vacation-detail"><strong>Hasta:</strong> {{
-            formatearFecha(vacation.fieldData.FechaHasta) }}
+      formatearFecha(vacation.fieldData.FechaHasta) }}
           </div>
           <div v-if="!vacation.editing" class="vacation-detail"><strong>Motivo:</strong> {{
-            vacation.fieldData.Motivo }}</div>
+      vacation.fieldData.Motivo }}</div>
           <div v-if="!vacation.editing" class="vacation-detail">
             <span class="estado-container">
               <strong>Estado:</strong> {{
-                vacation.fieldData.Estado }} <span v-if="vacation.fieldData.Estado === 'SOLICITADAS'"
+      vacation.fieldData.Estado }} <span v-if="vacation.fieldData.Estado === 'SOLICITADAS'"
                 class="status-icon purple"></span>
               <span v-else-if="vacation.fieldData.Estado === 'EN PROCESO'" class="status-icon blue"></span>
               <span v-else-if="vacation.fieldData.Estado === 'RECHAZADAS'" class="status-icon red"></span>
@@ -71,7 +73,7 @@
             </span>
           </div>
           <div v-if="!vacation.editing" class="vacation-detail"><strong>Notas:</strong> {{
-            vacation.fieldData.Notas }}
+      vacation.fieldData.Notas }}
           </div>
           <b-button variant="outline-primary" v-if="!vacation.editing && vacation.fieldData.Estado === 'SOLICITADAS'"
             @click="editarVacacion(vacation)">
@@ -82,7 +84,8 @@
             <b-row class="form-option my-3">
               <label for="editStartDate">Fecha de inicio:</label>
               <datepicker id="editStartDate" v-model="vacacionActual.FechaDesde" :format="customFormatter"
-                :disabled-dates="disabledDates" input-class="form-input form-control" :calendar-class="calendarCentered">
+                :disabled-dates="disabledDates" input-class="form-input form-control"
+                :calendar-class="calendarCentered">
               </datepicker>
             </b-row>
             <b-row class="form-option my-3">
@@ -121,6 +124,7 @@
 <script>
 import Swal from "sweetalert2";
 import Datepicker from 'vuejs-datepicker';
+import es from 'vuejs-datepicker/src/locale/translations/es';
 
 export default {
   middleware: "authentication",
@@ -148,7 +152,9 @@ export default {
       mostrarModalEdicion: false,
       notas: '',
       calendarCentered: 'datepicker-popup',
-
+      datePickerConfig: {
+        language: es,
+      },
     };
   },
   computed: {
@@ -158,11 +164,11 @@ export default {
         return { from: null, to: null }; // No hay fechas deshabilitadas si no se ha seleccionado la fecha de inicio
       }
 
-      // Establece el límite inferior como el día después de la fecha de inicio
+      // Establece el límite inferior como el día de la fecha de inicio
       const dayAfterStart = new Date(start);
-      dayAfterStart.setDate(dayAfterStart.getDate() + 1);
+      dayAfterStart.setDate(dayAfterStart.getDate());
       return {
-        to: new Date(dayAfterStart) // Deshabilita todas las fechas hasta el día después de la fecha de inicio
+        to: new Date(dayAfterStart) // Deshabilita todas las fechas hasta el día de la fecha de inicio
       };
     }
   },
@@ -210,12 +216,12 @@ export default {
         });
         return;
       }
-      if (new Date(this.startDate) >= new Date(this.endDate)) {
+      if (new Date(this.startDate) > new Date(this.endDate)) {
         Swal.fire({
           icon: "error",
           title: "Fecha incorrecta",
           confirmButtonColor: "#000",
-          text: `La fecha de inicio debe ser anterior a la fecha de finalización.`,
+          text: `La fecha de inicio debe ser anterior o igual a la fecha de finalización.`,
         });
         return;
       }
@@ -224,12 +230,14 @@ export default {
       try {
         let response = await this.$axios.$post(
           "/api/vacaciones/new",
-          { Tec: tec,
+          {
+            Tec: tec,
             EmpleadoNombre: empleadoNombre,
             motivo: this.vacationReason,
             FechaIni: this.customFormatter(this.startDate),
             FechaFin: this.customFormatter(this.endDate),
-            Notas: notas },
+            Notas: notas
+          },
           {
             headers: {
               Authorization: `Bearer ${this.$cookies.get("TOKEN")}`,
@@ -261,8 +269,8 @@ export default {
         console.log(e);
       }
       this.loading = false;
-    }, async getVacaciones() {
-
+    },
+    async getVacaciones() {
       let tec = this.$store.state.User;
       try {
         let response = await this.$axios.$post(
@@ -276,7 +284,6 @@ export default {
         );
         if (response instanceof Object) {
           this.vacations = response;
-          console.log("vacaciones -> ", this.vacations);
         }
 
       } catch (e) {
@@ -301,13 +308,13 @@ export default {
         });
       }
 
-      // Verificar que la fecha de inicio sea menor que la fecha de finalización
-      if (this.formatearFecha(vacation.FechaDesde) >= this.formatearFecha(vacation.FechaHasta)) {
+      // Verificar que la fecha de inicio sea menor o igual que la fecha de finalización
+      if (this.formatearFecha(vacation.FechaDesde) > this.formatearFecha(vacation.FechaHasta)) {
         Swal.fire({
           icon: "error",
           title: "Oops...",
           confirmButtonColor: "#000",
-          text: `La fecha de inicio debe ser anterior a la fecha de finalización.`,
+          text: `La fecha de inicio debe ser anterior o igual a la fecha de finalización.`,
         });
         return; // Salir de la función si las fechas no son válidas
       }
